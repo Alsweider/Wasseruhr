@@ -1,5 +1,5 @@
 # Wasseruhr
-This programme notifies you when it is [time](https://www.youtube.com/watch?v=jUA2hLKhgEI) to drink another glass. Once the total amount, glass size, and drinking frequency are set, the countdown begins and continues until the entire quantity has been consumed. As a notification, an optional beep may sound, or a pop-up window may appear.
+This programme notifies you when it is [time](https://www.youtube.com/watch?v=0LL9BwHBfdk) to drink another glass. Once the total amount, glass size, and drinking frequency are set, the countdown begins and continues until the entire quantity has been consumed. As a notification, an optional beep may sound, or a pop-up window may appear.
 
 Latest version: [Download](https://github.com/Alsweider/Wasseruhr/releases/latest)
 

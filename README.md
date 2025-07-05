@@ -8,4 +8,4 @@ Latest version: [Download](https://github.com/Alsweider/Wasseruhr/releases/lates
 The human body can only process a limited amount of fluid per hour. Generally, about 2 litres of water per day are recommended; however, this may vary significantly depending on physical activity and temperature. If large amounts of water are consumed too quickly without adequate sodium intake (salt), there is a risk of [water intoxication](https://en.wikipedia.org/wiki/Water_intoxication).
 Use of this programme is at your own risk and should be discontinued immediately if symptoms such as discomfort, muscle twitching, head pressure, dizziness, confusion, visual disturbances, fatigue, chills, or similar occur.
 
-![Wasseruhr 2025-07-02 21-28-06](https://github.com/user-attachments/assets/af0cfd77-e3c1-49b5-af6b-b7e9164d4163)
+![Wasseruhr 2025-07-05 03-03-08](https://github.com/user-attachments/assets/11227507-dfe3-443f-8b9b-376dc87e22a7)

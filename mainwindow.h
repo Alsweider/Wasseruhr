@@ -34,6 +34,8 @@ private slots:
 
     void on_spinBoxRandomness_valueChanged(int arg1);
 
+    void on_checkBoxChallenge_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 
@@ -60,6 +62,14 @@ private:
     bool lastRoundCompleted;
     void initDisplay();
     int secondsLapStartwert;
+    bool challengeActive;
+    int challengeSeconds;
+    int challengeSecondsStartwert;
+    void updateChallengeDisplay();
+    void showChallengeMessage();
+    void startChallenge();
+    void showFinishPopup();
+    int generateChallengeSeconds();
 
 
 };

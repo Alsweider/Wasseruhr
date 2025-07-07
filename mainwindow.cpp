@@ -6,6 +6,7 @@
 #include <QRandomGenerator>
 
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -68,6 +69,8 @@ void MainWindow::on_pushButton_clicked()
 
     //wenn alle Variablen einen Wert außer Nuhl enthalten
     if (totalVolume && secondsGlass && glassVolume){
+
+
         lastRoundActive = false;
         lastRoundCompleted = false;
 
@@ -103,12 +106,35 @@ void MainWindow::on_pushButton_clicked()
         ui->statusBar->showMessage(QString("Round: %1 | Glasses: %2").arg(lapsCounter).arg(glassCounter));
 
         beepMessage();
-
     }
+
+    /* Teste für die Fehlersuche schon mal die
+     * Extra-Wartezeit-Generierung, damit nicht
+     * jedes mal alle Runden durchlaufen werden müssen */
+    for (int i = 0; i < 100; i++){
+        int testeWartezeit = generateChallengeSeconds();
+        qDebug() << "Test-Wartezeit wäre: " << testeWartezeit / 60 << " Minuten.";
+    }
+
 }
 
 
 void MainWindow::setTimer() {
+
+    //Challenge/Extra-Wartezeit aktiviert
+    if (challengeActive){
+        if (challengeSeconds > 0){
+            challengeSeconds--;
+            updateChallengeDisplay();
+        } else {
+            //Wartezeit abgelaufen
+            challengeActive = false;
+            timer->stop();
+            showChallengeMessage();
+        }
+        return;
+    }
+
     if (lastRoundActive) {
         //Letzte Runde läuft noch
         if (secondsLap > 0) {
@@ -118,10 +144,20 @@ void MainWindow::setTimer() {
         } else {
             //Letzte Runde ist nun abgeschlossen
             lastRoundCompleted = true;
-            beepMessage();
+            //beepMessage();
             timer->stop();
             updateTimerDisplay();
-            lastRoundActive = false;
+            //Nach Ende keine Gläser mehr aufzeichnen lassen.
+            ui->pushButtonLogGlass->setEnabled(false);
+
+            //Extra-Wartezeit?
+            if (ui->checkBoxChallenge->isChecked()){
+                startChallenge();
+            } else {
+                lastRoundActive = false;
+                //showFinishPopup();
+                beepMessage();
+            }
         }
         return;
     }
@@ -221,6 +257,8 @@ void MainWindow::initVars(){
     lastRoundActive = false;
     lastRoundCompleted = false;
     secondsLapStartwert = 0;
+    challengeActive = false;
+    challengeSeconds = 0;
 
 }
 
@@ -374,3 +412,116 @@ void MainWindow::initDisplay(){
 
     ui->statusBar->showMessage("");
 }
+
+void MainWindow::startChallenge(){
+    //Dauer berechnen
+    challengeSeconds = generateChallengeSeconds();
+    challengeSecondsStartwert = challengeSeconds;
+    challengeActive = true;
+
+    //Fortschrittsanzeige ggf. anpassen
+    ui->progressBar->setMaximum(challengeSecondsStartwert);
+    ui->progressBar->setValue(0);
+    ui->progressBarTotal->setMaximum(challengeSecondsStartwert);
+    ui->progressBarTotal->setValue(0);
+
+    if (ui->checkBoxPopup->isChecked()){
+        //Pop-up zur Ankündigung der Wartezeit
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle("Waiting Challenge");
+
+        if (ui->checkBoxShowExtraTime->isChecked()){
+            msgBox.setText(QString("Please wait for %1 minutes before going to the toilet.")
+                               .arg(challengeSeconds / 60));
+        } else {
+            msgBox.setText(QString("Please wait for a while before going to the toilet."));
+        }
+
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setWindowModality(Qt::ApplicationModal);
+        msgBox.setWindowFlags(msgBox.windowFlags() | Qt::WindowStaysOnTopHint);
+        msgBox.activateWindow();
+        msgBox.raise();
+        msgBox.exec();
+    }
+
+    ui->statusBar->showMessage("Please wait for a while before going to the toilet.");
+
+    // Timer fortsetzen
+    timer->start(1000);
+}
+
+void MainWindow::updateChallengeDisplay(){
+    //wenn die Zeit angezeigt werden soll
+    if(ui->checkBoxShowExtraTime->isChecked()){
+        //Fortschrittsbalken aktualisieren
+        int value = challengeSecondsStartwert - challengeSeconds;
+        ui->progressBar->setValue(value);
+        ui->progressBarTotal->setValue(value);
+
+        //Zeitdarstellung berechnen
+        int h = challengeSeconds / 3600;
+        int m = (challengeSeconds % 3600) / 60;
+        int s = challengeSeconds % 60;
+
+        //Statuszeile Wartezeit anzeigen
+        ui->statusBar->showMessage(
+            QString("Waiting time before toilet: %1:%2:%3")
+                .arg(h, 2, 10, QChar('0'))
+                .arg(m, 2, 10, QChar('0'))
+                .arg(s, 2, 10, QChar('0')));
+
+        //Zeit in Uhr darstellen
+        ui->timeEditLap->setTime(QTime(h, m, s));
+        ui->timeEditTotal->setTime(QTime(h, m, s));
+    } else {
+        //Nur Wartemeldung in Statuszeile
+        ui->statusBar->showMessage("Please be patient...");
+    }
+
+}
+
+void MainWindow::showChallengeMessage() {
+
+    if (ui->checkBoxPopup->isChecked()){
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle("You may go now");
+        msgBox.setText("You may now go to the toilet. Challenge complete!");
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setWindowModality(Qt::ApplicationModal);
+        msgBox.setWindowFlags(msgBox.windowFlags() | Qt::WindowStaysOnTopHint);
+        msgBox.activateWindow();
+        msgBox.raise();
+        msgBox.exec();
+    }
+
+    ui->statusBar->showMessage("Challenge complete!");
+
+    //Zyklus beenden
+    initVars();
+    initDisplay();
+    ui->pushButton->setEnabled(true); //Startknopf aktivieren
+}
+
+
+void MainWindow::on_checkBoxChallenge_stateChanged(int arg1)
+{
+    //Die Checkbox zur Zeitanzeige sei nur anklickbar, wenn die Extra-Wartezeit aktiviert ist
+    if (ui->checkBoxChallenge->isChecked()){
+        ui->checkBoxShowExtraTime->setEnabled(true);
+    } else {
+        ui->checkBoxShowExtraTime->setEnabled(false);
+    }
+}
+
+
+//Generiert die Wartezeit zufällig (Experimentell, evtl. Formel für Gewichtung ergänzen.)
+int MainWindow::generateChallengeSeconds()
+{
+    int minWait = 3 * 60; //3 Minuten
+    int maxWait = 3 * 60 * 60; //3 Stunden
+    int wartezeit = QRandomGenerator::global()->bounded(minWait,  maxWait + 1);
+    return wartezeit;
+}
+
+

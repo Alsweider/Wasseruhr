@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>294</width>
-    <height>383</height>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -229,8 +229,8 @@
       <property name="title">
        <string>Optional</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QLabel" name="label_9">
@@ -256,6 +256,36 @@
           <widget class="QLabel" name="label_10">
            <property name="text">
             <string>± %</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QCheckBox" name="checkBoxChallenge">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adds a special test of patience after the drinking rounds are completed. This extra waiting time is calculated at random.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Extra Patience</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxShowExtraTime">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Displays the extra waiting time after the drinking rounds have concluded. If disabled, the waiting time will be hidden and a notification will only appear once the time has elapsed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Show Extra Time</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -335,6 +365,9 @@
         </property>
         <property name="text">
          <string>Pop-up</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
